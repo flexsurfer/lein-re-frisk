@@ -1,6 +1,6 @@
 # lein-re-frisk
 
-A Leiningen plugin to start a web server for the remote debug re-frame applications using re-frisk. 
+A Leiningen plugin to start a web server for the remote debugging re-frame applications (react native, electron) using [re-frisk](https://github.com/flexsurfer/re-frisk). 
 
 <img src="2016-01-01-starting-clojure-today.jpg" width="100">
 
