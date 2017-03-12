@@ -6,13 +6,13 @@
     [re-frisk-shell.core :as ui])
   (:require-macros [reagent.ratom :refer [reaction]]))
 
-(defonce app-db (reagent/atom 1))
-(defonce re-frame-data (reagent/atom {:app-db (reaction @app-db)}))
+
+(defonce re-frame-data (reagent/atom {:app-db (reagent/atom "not connected")}))
 (defonce re-frame-events (reagent/atom []))
 (defonce deb-data (reagent/atom {}))
 
 (defn update-app-db [val]
-  (reset! app-db val))
+  (reset! (:app-db @re-frame-data) val))
 
 (defn update-events [val]
   (swap! re-frame-events conj val))

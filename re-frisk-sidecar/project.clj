@@ -1,4 +1,4 @@
-(defproject re-frisk-sidecar "0.4.0"
+(defproject re-frisk-sidecar "0.4.4"
   :description "re-frisk remote debugger server"
   :url "https://github.com/flexsurfer/re-frisk"
   :license {:name "MIT License"
@@ -15,11 +15,11 @@
                  [org.clojure/core.async    "0.2.395"]
                  [reagent "0.6.0"]
                  [re-frame "0.8.0"]
-                 [re-frisk-shell "0.1.0"]
+                 [re-frisk-shell "0.4.4"]
                  [com.cognitect/transit-cljs "0.8.239"]]
   ;:main re-frisk-sidecar.core
   :plugins
-  [[lein-cljsbuild      "1.1.4"]]
+  [[lein-cljsbuild      "1.1.4" :exclusions [[org.clojure/clojure]]]]
 
   :cljsbuild
   {:builds
@@ -27,12 +27,5 @@
      :source-paths ["src"]
      :compiler {:main re-frisk-sidecar.client
                 :output-to "resources/public/main.js"
-                :optimizations :whitespace #_:advanced
-                :pretty-print true}}
-    {:id "min"
-     :source-paths ["src"]
-     :compiler {:output-to "resources/public/main.js"
-                :main re-frisk-sidecar.client
-                :optimizations :advanced
-                :closure-defines {goog.DEBUG false}
+                :optimizations :simple
                 :pretty-print false}}]})
