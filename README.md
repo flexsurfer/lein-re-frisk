@@ -1,8 +1,8 @@
 # lein-re-frisk
 
-A Leiningen plugin to start a web server for the remote debugging re-frame applications (react native, electron) using [re-frisk](https://github.com/flexsurfer/re-frisk). 
+A Leiningen plugin that starts a web server for the remote debugging re-frame applications (react native, electron, web) using [re-frisk-remote](https://github.com/flexsurfer/re-frisk-remote) library. 
 
-<img src="2016-01-01-starting-clojure-today.jpg" width="100">
+[<img src="2016-01-01-starting-clojure-today.jpg" width="100">](https://github.com/flexsurfer/re-frisk)
 
 ## Usage
 
@@ -29,3 +29,5 @@ Start a web server in the current directory on the default port (4567):
 Select a different port by supplying the port number on the command line:
 
     $ lein re-frisk 8095
+
+Run re-frame application with the [re-frisk-remote](https://github.com/flexsurfer/re-frisk-remote) library.
