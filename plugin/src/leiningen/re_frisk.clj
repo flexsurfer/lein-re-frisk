@@ -4,7 +4,7 @@
             [clojure.string :as str]))
 
 (defn- replace-host [txt host]
-  (str/replace txt #"enable-re-frisk-remote!.*\)" (str "enable-re-frisk-remote! {:host \"" host ":4567\"})")))
+  (str/replace txt #":host \".*\"" (str ":host \"" host ":4567\"")))
 
 (defn use-re-natal [project]
   (let [config (json/read-str (slurp ".re-natal") :key-fn keyword)

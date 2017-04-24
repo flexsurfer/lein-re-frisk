@@ -1,4 +1,4 @@
-(defproject re-frisk-sidecar "0.4.4"
+(defproject re-frisk-sidecar "0.4.5"
   :description "re-frisk remote debugger server"
   :url "https://github.com/flexsurfer/re-frisk"
   :license {:name "MIT License"
@@ -15,7 +15,7 @@
                  [org.clojure/core.async    "0.2.395"]
                  [reagent "0.6.0"]
                  [re-frame "0.8.0"]
-                 [re-frisk-shell "0.4.4"]
+                 [re-frisk-shell "0.4.5"]
                  [com.cognitect/transit-cljs "0.8.239"]]
   ;:main re-frisk-sidecar.core
   :plugins
