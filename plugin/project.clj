@@ -1,4 +1,4 @@
-(defproject lein-re-frisk "0.4.7"
+(defproject lein-re-frisk "0.4.8"
   :description "leiningen plugin for the remote debug re-frame applications"
   :url "https://github.com/flexsurfer/re-frisk"
   :license {:name "MIT License"
