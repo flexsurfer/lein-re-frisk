@@ -47,6 +47,12 @@
     (doseq [uid uids]
       (chsk-send! uid [:refrisk/events ?data]))))
 
+(defmethod -event-msg-handler :refrisk/id-handler
+  [{:as ev-msg :keys [?reply-fn ?data]}]
+  (let [uids (:any @connected-uids)]
+    (doseq [uid uids]
+      (chsk-send! uid [:refrisk/id-handler ?data]))))
+
 ;SENTE ROUTER
 (defonce router_ (atom nil))
 
