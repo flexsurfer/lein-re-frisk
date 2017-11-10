@@ -10,11 +10,13 @@
   (let [config (json/read-str (slurp ".re-natal") :key-fn keyword)
         dev-root (get-in config [:envRoots :dev])
         android-path (str dev-root "/env/android/main.cljs")
-        ios-path (str dev-root "/env/ios/main.cljs")]
-    (spit android-path (replace-host (slurp android-path) (:androidHost config)))
-    (spit ios-path (replace-host (slurp ios-path) (:iosHost config)))
-    (leiningen.core.main/info (str "re-frisk server for iOS: " (:iosHost config) ":4567"))
-    (leiningen.core.main/info (str "re-frisk server for Android: " (:androidHost config) ":4567"))))
+        ios-path (str dev-root "/env/ios/main.cljs")
+        ios-host (get-in config [:platforms :ios :host] (:iosHost config))
+        android-host (get-in config [:platforms :android :host] (:androidHost config))]
+    (spit android-path (replace-host (slurp android-path) android-host))
+    (spit ios-path (replace-host (slurp ios-path) ios-host))
+    (leiningen.core.main/info (str "re-frisk server for iOS: " ios-host ":4567"))
+    (leiningen.core.main/info (str "re-frisk server for Android: " android-host ":4567"))))
 
 (defn ^:no-project-needed re-frisk
   {:subtasks [#'use-re-natal]}
