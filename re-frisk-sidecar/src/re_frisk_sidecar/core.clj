@@ -47,6 +47,12 @@
     (doseq [uid uids]
       (chsk-send! uid [:refrisk/events ?data]))))
 
+(defmethod -event-msg-handler :refrisk/pre-events
+  [{:as ev-msg :keys [?reply-fn ?data]}]
+  (let [uids (:any @connected-uids)]
+    (doseq [uid uids]
+      (chsk-send! uid [:refrisk/pre-events ?data]))))
+
 (defmethod -event-msg-handler :refrisk/id-handler
   [{:as ev-msg :keys [?reply-fn ?data]}]
   (let [uids (:any @connected-uids)]

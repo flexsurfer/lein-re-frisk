@@ -16,7 +16,16 @@
 
 (defn update-events [val]
   (let [indx (count @re-frame-events)]
+    (if (:trace (last @re-frame-events))
+      (swap! re-frame-events update-in [(dec indx) :trace] #(assoc % :duration val
+                                                                     :status :completed))
+      (swap! re-frame-events conj {:event val
+                                   :indx indx}))))
+
+(defn update-pre-events [val]
+  (let [indx (count @re-frame-events)]
     (swap! re-frame-events conj {:event val
+                                 :trace {:status :handled}
                                  :indx indx})))
 
 (defn update-id-handler [val]
@@ -44,6 +53,7 @@
   (case (first ?data)
         :refrisk/app-db (update-app-db (second ?data))
         :refrisk/events (update-events (second ?data))
+        :refrisk/pre-events (update-pre-events (second ?data))
         :refrisk/id-handler (update-id-handler (second ?data))))
 
 ;SENTE ROUTER
@@ -72,5 +82,3 @@
   (mount))
 
 (comment (on-js-reload) (run)) ; removing warning in IDEA
-
-
