@@ -20,8 +20,9 @@
         duration (if (map? val) (:time val) val)
         event (if (map? val) (:event val) val)]
     (if (:trace (last @re-frame-events))
-      (swap! re-frame-events update-in [(dec indx) :trace]
-             #(assoc % :duration duration :app-db-diff app-db-diff :status :completed))
+      (swap! re-frame-events update-in [(dec indx)]
+             #(assoc % :app-db-diff app-db-diff
+                     :trace {:duration duration :status :completed}))
       (swap! re-frame-events conj {:event event
                                    :app-db-diff app-db-diff
                                    :indx indx}))))
