@@ -15,11 +15,15 @@
   (reset! (:app-db @re-frame-data) val))
 
 (defn update-events [val]
-  (let [indx (count @re-frame-events)]
+  (let [indx (count @re-frame-events)
+        app-db-diff (:app-db-diff val)
+        duration (if (map? val) (:time val) val)
+        event (if (map? val) (:event val) val)]
     (if (:trace (last @re-frame-events))
-      (swap! re-frame-events update-in [(dec indx) :trace] #(assoc % :duration val
-                                                                     :status :completed))
-      (swap! re-frame-events conj {:event val
+      (swap! re-frame-events update-in [(dec indx) :trace]
+             #(assoc % :duration duration :app-db-diff app-db-diff :status :completed))
+      (swap! re-frame-events conj {:event event
+                                   :app-db-diff app-db-diff
                                    :indx indx}))))
 
 (defn update-pre-events [val]
