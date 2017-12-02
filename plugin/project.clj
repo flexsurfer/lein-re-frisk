@@ -4,5 +4,5 @@
   :license {:name "MIT License"
             :url "https://github.com/flexsurfer/re-frisk/blob/master/LICENSE"}
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [re-frisk-sidecar "0.5.3"]]
+                 [re-frisk-sidecar "0.5.4"]]
   :eval-in-leiningen true)
