@@ -15,7 +15,7 @@
                  [org.clojure/core.async    "0.2.395"]
                  [reagent "0.7.0"]
                  [re-frame "0.10.1"]
-                 [re-frisk-shell "0.5.1"]
+                 [re-frisk-shell "0.5.2"]
                  [com.cognitect/transit-cljs "0.8.239"]]
   ;:main re-frisk-sidecar.core
   :plugins
