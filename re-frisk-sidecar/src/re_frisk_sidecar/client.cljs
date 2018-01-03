@@ -36,12 +36,13 @@
 (defn update-id-handler [val]
   (reset! (:id-handler @re-frame-data) val))
 
-(let [{:keys [chsk ch-recv send-fn state]}
+(let [{:keys [chsk ch-recv state]}
       (sente/make-channel-socket-client!
         "/chsk" ; Must match server Ring routing URL
         {:type   :auto
          :host   (str "localhost:" js/location.port)
-         :packer (sente-transit/get-transit-packer)})]
+         :packer (sente-transit/get-transit-packer)
+         :params {:kind :re-frisk-sidecar}})]
   (def ch-chsk ch-recv)) ; ChannelSocket's receive channel
 
 ;SENTE HANDLERS

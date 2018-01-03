@@ -1,6 +1,7 @@
 (ns re-frisk-sidecar.core
   (:use compojure.core)
   (:require
+    [clojure.set :as set]
     [org.httpkit.server :as ohs]
     [compojure.route :as route]
     [compojure.handler :as handler]
@@ -9,17 +10,56 @@
     [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]
     [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
     [ring.middleware.cors :refer [wrap-cors]]
-    [ring.util.response :as response]))
+    [ring.util.response :as response]
+    [re-frisk.delta :as delta]))
+
+(defonce app-db (atom nil))
+(defonce id-handler (atom nil))
+;; Contents of the last :refrisk/pre-events message. If a client connects
+;; between :refrisk/pre-events and :refrisk/events, then this data is sent to it
+;; to resynchronise, as :refrisk/events message won't contain the event
+;; contents.
+(defonce pending-event (atom nil))
+
+;; The list of clients who are interested in receiving notifications.
+(defonce listeners (atom #{}))
+;; Current re-frisk-remote connection
+(defonce remote-conn (atom nil))
 
 (let [{:keys [ch-recv send-fn connected-uids
               ajax-post-fn ajax-get-or-ws-handshake-fn]}
       (sente/make-channel-socket-server!
-        (get-sch-adapter) {:packer (sente-transit/get-transit-packer)})]
+        (get-sch-adapter) {:packer (sente-transit/get-transit-packer)
+                           :user-id-fn :client-id})]
   (def ring-ajax-post                ajax-post-fn)
   (def ring-ajax-get-or-ws-handshake ajax-get-or-ws-handshake-fn)
   (def ch-chsk                       ch-recv) ; ChannelSocket's receive channel
   (def chsk-send!                    send-fn) ; ChannelSocket's send API fn
   (def connected-uids                connected-uids)) ; Watchable, read-only atom
+
+;; Remove disconnected clients from the set of listeners
+(add-watch
+ connected-uids nil
+ (fn [_ _ old new]
+   (let [removed (set/difference (:any old) (:any new))]
+     (swap! listeners set/difference removed)
+     (when (contains? removed @remote-conn)
+       (reset! remote-conn nil)))))
+
+(defn- classify-change [old new]
+  (cond
+    (and (empty? old) (not (empty? new))) :first-added
+    (and (not (empty? old)) (empty? new)) :last-removed
+    :else :other))
+
+(add-watch
+ listeners nil
+ (fn [_ _ old new]
+   (when @remote-conn
+     (case (classify-change old new)
+       :first-added (chsk-send! @remote-conn [:refrisk/enable nil])
+       :last-removed (chsk-send! @remote-conn [:refrisk/disable nil])
+       :other nil))))
 
 ;HANDLERS
 (defmulti -event-msg-handler "Multimethod to handle Sente `event-msg`s" :id)
@@ -36,28 +76,59 @@
 
 ;RE-FRISK HANDLERS
 (defmethod -event-msg-handler :refrisk/app-db
-  [{:as ev-msg :keys [?reply-fn ?data]}]
-  (let [uids (:any @connected-uids)]
-    (doseq [uid uids]
-      (chsk-send! uid [:refrisk/app-db ?data]))))
+  [{:keys [?data]}]
+  (reset! app-db ?data)
+  (doseq [uid @listeners]
+    (chsk-send! uid [:refrisk/app-db @app-db])))
+
+(defmethod -event-msg-handler :refrisk/app-db-delta
+  [{:keys [?data]}]
+  (swap! app-db delta/apply ?data)
+  (doseq [uid @listeners]
+    (chsk-send! uid [:refrisk/app-db @app-db])))
 
 (defmethod -event-msg-handler :refrisk/events
-  [{:as ev-msg :keys [?reply-fn ?data]}]
-  (let [uids (:any @connected-uids)]
-    (doseq [uid uids]
-      (chsk-send! uid [:refrisk/events ?data]))))
+  [{:keys [?data]}]
+  (reset! pending-event nil)
+  (doseq [uid @listeners]
+    (chsk-send! uid [:refrisk/events ?data])))
 
 (defmethod -event-msg-handler :refrisk/pre-events
-  [{:as ev-msg :keys [?reply-fn ?data]}]
-  (let [uids (:any @connected-uids)]
-    (doseq [uid uids]
-      (chsk-send! uid [:refrisk/pre-events ?data]))))
+  [{:keys [?data]}]
+  (reset! pending-event ?data)
+  (doseq [uid @listeners]
+    (chsk-send! uid [:refrisk/pre-events ?data])))
 
 (defmethod -event-msg-handler :refrisk/id-handler
-  [{:as ev-msg :keys [?reply-fn ?data]}]
-  (let [uids (:any @connected-uids)]
-    (doseq [uid uids]
-      (chsk-send! uid [:refrisk/id-handler ?data]))))
+  [{:keys [?data]}]
+  (reset! id-handler ?data)
+
+  (doseq [uid @listeners]
+    (chsk-send! uid [:refrisk/id-handler @id-handler])))
+
+(defmethod -event-msg-handler :refrisk/id-handler-delta
+  [{:keys [?data]}]
+  (swap! id-handler delta/apply ?data)
+  (doseq [uid @listeners]
+    (chsk-send! uid [:refrisk/id-handler @id-handler])))
+
+(defn- sidecar-client-connected [client-id]
+  (chsk-send! client-id [:refrisk/app-db @app-db])
+  (chsk-send! client-id [:refrisk/id-handler @id-handler])
+  (when @pending-event
+    (chsk-send! client-id [:refrisk/pre-events @pending-event]))
+  (swap! listeners conj client-id))
+
+(defn- remote-connected [client-id]
+  (reset! remote-conn client-id)
+  (when (pos? (count @listeners))
+    (chsk-send! @remote-conn [:refrisk/enable nil])))
+
+(defmethod -event-msg-handler :chsk/uidport-open [{:keys [client-id ring-req]}]
+  (let [kind (get-in ring-req [:params :kind])]
+    (cond
+      (= kind "re-frisk-sidecar") (sidecar-client-connected client-id)
+      (= kind "re-frisk-remote") (remote-connected client-id))))
 
 ;SENTE ROUTER
 (defonce router_ (atom nil))
