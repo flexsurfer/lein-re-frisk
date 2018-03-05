@@ -60,7 +60,8 @@
         :refrisk/app-db (update-app-db (second ?data))
         :refrisk/events (update-events (second ?data))
         :refrisk/pre-events (update-pre-events (second ?data))
-        :refrisk/id-handler (update-id-handler (second ?data))))
+        :refrisk/id-handler (update-id-handler (second ?data))
+        :noop))
 
 ;SENTE ROUTER
 (defonce router_ (atom nil))
