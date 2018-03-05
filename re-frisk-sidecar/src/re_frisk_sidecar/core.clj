@@ -130,6 +130,12 @@
       (= kind "re-frisk-sidecar") (sidecar-client-connected client-id)
       (= kind "re-frisk-remote") (remote-connected client-id))))
 
+(defmethod -event-msg-handler :trace/log
+  [{:as ev-msg :keys [?reply-fn ?data]}]
+  (let [uids (:any @connected-uids)]
+    (doseq [uid uids]
+      (chsk-send! uid [:trace/log ?data]))))
+
 ;SENTE ROUTER
 (defonce router_ (atom nil))
 
@@ -147,6 +153,9 @@
   (GET "/" req (response/content-type
                  (response/resource-response "public/index.html")
                  "text/html"))
+  (GET "/10x" req (response/content-type
+                (response/resource-response "public/10x.html")
+                "text/html"))
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post                req))
   (route/resources "/")
