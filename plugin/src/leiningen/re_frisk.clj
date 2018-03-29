@@ -25,7 +25,7 @@
     "use-re-natal" (use-re-natal project)
     (leval/eval-in-project
       {:dependencies '[[org.clojure/clojure "1.8.0"]
-                       [re-frisk-sidecar "0.5.4"]]}
+                       [re-frisk-sidecar "0.5.5"]]}
       `(re-frisk-sidecar.core/-main ~subtask-or-port)
       '(require 're-frisk-sidecar.core))))
 
