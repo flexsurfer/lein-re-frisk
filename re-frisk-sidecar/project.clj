@@ -17,7 +17,7 @@
                  [re-frame "0.10.1"]
                  [re-frisk-shell "0.5.2"]
                  [re-frisk "0.5.4"]
-                 [day8.re-frame/re-frame-10x "0.3.0"]
+                 [day8.re-frame/re-frame-10x "0.3.2"]
                  [com.cognitect/transit-cljs "0.8.239"]]
   ;:main re-frisk-sidecar.core
   :plugins
