@@ -1,4 +1,4 @@
-(defproject re-frisk-sidecar "0.5.5"
+(defproject re-frisk-sidecar "0.5.6"
   :description "re-frisk remote debugger server"
   :url "https://github.com/flexsurfer/re-frisk"
   :license {:name "MIT License"
