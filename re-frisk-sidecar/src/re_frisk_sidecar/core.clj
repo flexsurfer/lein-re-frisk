@@ -151,11 +151,11 @@
 (defroutes
   app-routes
   (GET "/" req (response/content-type
-                 (response/resource-response "public/index.html")
+                 (response/resource-response "public/re-frisk.html")
                  "text/html"))
   (GET "/10x" req (response/content-type
-                (response/resource-response "public/10x.html")
-                "text/html"))
+                   (response/resource-response "public/10x.html")
+                   "text/html"))
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post                req))
   (route/resources "/")
