@@ -28,7 +28,7 @@
    [{:id "dev"
      :source-paths ["src"]
      :compiler {:main          re-frisk-sidecar.client
-                :output-to     "resources/public/main.js"
+                :output-to     "resources/public/re-frisk.js"
                 :optimizations :simple
                 :pretty-print  false}}
     {:id "10x"
