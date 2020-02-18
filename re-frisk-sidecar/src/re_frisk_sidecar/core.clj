@@ -4,11 +4,10 @@
     [clojure.set :as set]
     [org.httpkit.server :as ohs]
     [compojure.route :as route]
-    [compojure.handler :as handler]
     [taoensso.sente :as sente]
     [taoensso.sente.packers.transit :as sente-transit]
     [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]
-    [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+    [re-frisk-sidecar.defaults :refer [wrap-defaults site-defaults]]
     [ring.middleware.cors :refer [wrap-cors]]
     [ring.util.response :as response]
     [re-frisk.delta :as delta]))
@@ -30,6 +29,7 @@
               ajax-post-fn ajax-get-or-ws-handshake-fn]}
       (sente/make-channel-socket-server!
         (get-sch-adapter) {:packer (sente-transit/get-transit-packer)
+                           :csrf-token-fn nil
                            :user-id-fn :client-id})]
   (def ring-ajax-post                ajax-post-fn)
   (def ring-ajax-get-or-ws-handshake ajax-get-or-ws-handshake-fn)
@@ -173,5 +173,3 @@
                           :access-control-allow-credentials "true"))
                     {:port port'})
     (println (str "re-frisk server has been started at http://localhost:" port'))))
-
-(comment (-main)) ; removing warning in IDEA

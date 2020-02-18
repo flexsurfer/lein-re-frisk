@@ -3,7 +3,7 @@
   <groupId>lein-re-frisk</groupId>
   <artifactId>lein-re-frisk</artifactId>
   <packaging>jar</packaging>
-  <version>0.5.2</version>
+  <version>0.5.8</version>
   <name>lein-re-frisk</name>
   <description>leiningen plugin for the remote debug re-frame applications</description>
   <url>https://github.com/flexsurfer/re-frisk</url>
@@ -64,7 +64,7 @@
     <dependency>
       <groupId>re-frisk-sidecar</groupId>
       <artifactId>re-frisk-sidecar</artifactId>
-      <version>0.5.2</version>
+      <version>0.5.7</version>
     </dependency>
   </dependencies>
 </project>

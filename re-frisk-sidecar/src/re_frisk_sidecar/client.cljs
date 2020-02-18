@@ -39,6 +39,7 @@
 (let [{:keys [chsk ch-recv state]}
       (sente/make-channel-socket-client!
         "/chsk" ; Must match server Ring routing URL
+        nil
         {:type   :auto
          :host   (str "localhost:" js/location.port)
          :packer (sente-transit/get-transit-packer)

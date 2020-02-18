@@ -1,18 +1,20 @@
-(defproject re-frisk-sidecar "0.5.7"
+(defproject re-frisk-sidecar "0.5.10"
   :description "re-frisk remote debugger server"
   :url "https://github.com/flexsurfer/re-frisk"
   :license {:name "MIT License"
             :url "https://github.com/flexsurfer/re-frisk/blob/master/LICENSE"}
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [[org.clojure/clojure "1.10.0"]
+
+                 [ring/ring-core "1.8.0"]
                  [ring-cors "0.1.8"]
-                 [ring/ring-defaults "0.1.5"]
-                 [http-kit "2.2.0"]
-                 [com.taoensso/sente "1.11.0"]
-                 [compojure "1.5.2"]
-                 [com.cognitect/transit-clj  "0.8.290"]
+                 [http-kit "2.3.0"]
+                 [re-frisk/sente "1.15.0"]
+                 [compojure "1.6.1"]
+                 [com.cognitect/transit-clj "0.8.319"]
                  [javax.servlet/servlet-api "2.5"]
+                 [org.clojure/core.async "0.7.559"]
+
                  [org.clojure/clojurescript "1.9.671"]
-                 [org.clojure/core.async    "0.2.395"]
                  [reagent "0.7.0"]
                  [re-frame "0.10.1"]
                  [re-frisk-shell "0.5.2"]

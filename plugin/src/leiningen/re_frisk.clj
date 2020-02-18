@@ -24,8 +24,7 @@
   (case subtask-or-port
     "use-re-natal" (use-re-natal project)
     (leval/eval-in-project
-      {:dependencies '[[org.clojure/clojure "1.8.0"]
-                       [re-frisk-sidecar "0.5.7"]]}
+      {:dependencies '[[org.clojure/clojure "1.10.0"]
+                       [re-frisk-sidecar "0.5.10"]]}
       `(re-frisk-sidecar.core/-main ~subtask-or-port)
       '(require 're-frisk-sidecar.core))))
-
